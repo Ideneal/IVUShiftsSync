@@ -30,6 +30,7 @@ def main():
     # Adapt shifts to events
     adapter = EventAdapter()
     events = adapter.get_events(shifts)
+    events_length = len(events)
 
     calendar = Calendar()
     calendar.switch_calendar(config['google']['calendar'])
@@ -38,12 +39,11 @@ def main():
     calendar_events = {}
     start_date = get_init_date(events).isoformat() + 'Z'  # 'Z' indicates UTC time
 
-    for event in calendar.get_events(start_date):
+    for event in calendar.get_events(start_date, max_result=events_length):
         event_date = event['start']['dateTime'].split('T')[0]
         calendar_events[event_date] = event
 
-    l = len(events)
-    progress_bar(0, l, prefix='Progress:', suffix='Complete', length=50)
+    progress_bar(0, events_length, prefix='Progress:', suffix='Complete', length=50)
     # Update the existent events and create the new ones
     for i, event in enumerate(events):
         event_date = event['start']['dateTime'].split('T')[0]
@@ -52,7 +52,7 @@ def main():
             calendar.update_event(calendar_event, event)
         else:
             calendar.create_event(event)
-        progress_bar(i+1, l, prefix='Progress:', suffix='Complete', length=50)
+        progress_bar(i+1, events_length, prefix='Progress:', suffix='Complete', length=50)
 
     print('Event synchronized!')
 
