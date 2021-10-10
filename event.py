@@ -26,6 +26,10 @@ class EventAdapter:
             time_begin = day.find('span', {'class': 'time begin'}).text
             time_end = day.find('span', {'class': 'time end'}).text
             day_after = time_end[-1:] == '+'
+            confirmed = day.find('div', {'class': 'confirm'}) is None
+
+            if not confirmed:
+                continue
 
             # Remove symbol + at the end of the string
             if day_after:

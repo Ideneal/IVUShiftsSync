@@ -46,12 +46,19 @@ def main():
     progress_bar(0, events_length, prefix='Progress:', suffix='Complete', length=50)
     # Update the existent events and create the new ones
     for i, event in enumerate(events):
-        event_date = event['start']['dateTime'].split('T')[0]
-        calendar_event = calendar_events.get(event_date)
-        if calendar_event:
-            calendar.update_event(calendar_event, event)
+        start_event_date = event['start']['dateTime'].split('T')[0]
+        end_event_date = event['end']['dateTime'].split('T')[0]
+        start_calendar_event = calendar_events.get(start_event_date)
+        end_calendar_event = calendar_events.get(end_event_date) if start_event_date != end_event_date else None
+
+        if start_calendar_event:
+            calendar.update_event(start_calendar_event, event)
         else:
             calendar.create_event(event)
+        
+        if end_calendar_event:
+            calendar.delete_event(end_calendar_event)
+
         progress_bar(i+1, events_length, prefix='Progress:', suffix='Complete', length=50)
 
     print('Event synchronized!')
