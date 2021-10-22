@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup as bs
 from utils import remove_control_chars
+from config import config
 
 
 class EventAdapter:
@@ -42,7 +43,7 @@ class EventAdapter:
                 end_date_time += timedelta(days=1)
 
             event = {
-                'summary': 'Work',
+                'summary': config['google']['event']['name'],
                 'description': remove_control_chars(duty.text),
                 'start': {'dateTime': start_date_time.isoformat(), 'timeZone': 'Europe/Rome'},
                 'end': {'dateTime': end_date_time.isoformat(), 'timeZone': 'Europe/Rome'}

@@ -4,3 +4,5 @@ ivu:
 
 google:
   calendar: 'Trenitalia'
+  event:
+    name: 'Work'

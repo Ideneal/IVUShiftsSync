@@ -3,6 +3,7 @@ from datetime import datetime
 from ivu import IVU
 from cal import Calendar
 from event import EventAdapter
+from config import config
 from utils import progress_bar, str2date, str2datetime, add_days, date2datetime
 
 
@@ -40,10 +41,6 @@ def sync(events, calendar):
 
 
 def main():
-    # Load configs
-    with open('config.yml', 'r') as f:
-        config = yaml.load(f, Loader=yaml.FullLoader)
-
     # Retrieve shifts
     client = IVU()
     client.login(config['ivu']['username'], config['ivu']['password'])
