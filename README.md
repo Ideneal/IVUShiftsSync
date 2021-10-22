@@ -13,10 +13,16 @@ To run the application, you need the following prerequisites:
 
 ## Install
 
-Run the following command line to install all requirements:
+Build the container
 
 ```bash
-pip install -r requirements.txt
+docker-compose build
+```
+
+Run docker container
+
+```bash
+docker-compose up -d
 ```
 
 ## Configuration
@@ -32,5 +38,5 @@ Finally, edit the `config.yml` file with your personal credentials.
 ## Run 
 
 ```bash
-python app.py
+docker-compose run app bash -c 'python app.py'
 ```

@@ -1,4 +1,3 @@
-import yaml
 from datetime import datetime
 from ivu import IVU
 from cal import Calendar
