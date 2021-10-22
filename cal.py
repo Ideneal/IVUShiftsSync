@@ -54,13 +54,13 @@ class Calendar:
                 self.current_calendar_id = calendar['id']
                 return
 
-    def get_events(self, start_time, max_result=10):
+    def get_events(self, datetime, max_result=10):
         """
         Returns a list of last events.
         """
         events_result = self.service.events().list(
             calendarId=self.current_calendar_id,
-            timeMin=start_time,
+            timeMin=datetime.isoformat() + 'Z',
             maxResults=max_result,
             singleEvents=True,
             orderBy='startTime'

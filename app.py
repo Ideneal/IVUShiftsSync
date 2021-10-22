@@ -3,18 +3,50 @@ from datetime import datetime
 from ivu import IVU
 from cal import Calendar
 from event import EventAdapter
-from utils import progress_bar
+from utils import progress_bar, str2date, str2datetime, add_days, date2datetime
 
 
 def get_init_date(events):
     now = datetime.utcnow()
     try:
-        start_date = datetime.strptime(
-            events[0]['start']['dateTime'], '%Y-%m-%dT%H:%M:%S') if len(events) > 0 else now
+        start_date = str2datetime(events[0]['start']['dateTime']) if len(events) > 0 else now
     except Exception as e:
         start_date = now
 
     return start_date
+
+
+def sync(events, calendar):
+    init_date = str2date(events[0]['start']['dateTime']) if len(events) > 0 else datetime.today()
+    last_date = str2date(events[-1]['start']['dateTime'])
+    current_date = init_date
+    days = (last_date - current_date).days
+
+    # Retrieve all existent calendar events
+    calendar_events = calendar.get_events(date2datetime(init_date), max_result=max(days, 10))
+
+    # Map events by dates
+    mapped_calendar_events = {str2date(event['start']['dateTime']): event for event in calendar_events}
+    mapped_events = {str2date(event['start']['dateTime']): event for event in events}
+
+    progress_bar(0, days, prefix='Progress:', suffix='Complete', length=50)
+
+    while current_date < last_date:
+        event = mapped_events.get(current_date)
+        calendar_event = mapped_calendar_events.get(current_date)
+
+        if event and calendar_event is None:
+            calendar.create_event(event)
+        
+        if event is None and calendar_event:
+            calendar.delete_event(calendar_event)
+        
+        if event and calendar_event:
+            calendar.update_event(calendar_event, event)
+
+        current_date = add_days(current_date, 1)
+        progress = days - (last_date - current_date).days
+        progress_bar(progress, days, prefix='Progress:', suffix='Complete', length=50)
 
 
 def main():
@@ -30,37 +62,13 @@ def main():
     # Adapt shifts to events
     adapter = EventAdapter()
     events = adapter.get_events(shifts)
-    events_length = len(events)
 
+    # Switch calendar
     calendar = Calendar()
     calendar.switch_calendar(config['google']['calendar'])
 
-    # Retrieve all existent calendar events
-    calendar_events = {}
-    start_date = get_init_date(events).isoformat() + 'Z'  # 'Z' indicates UTC time
-
-    for event in calendar.get_events(start_date, max_result=events_length):
-        event_date = event['start']['dateTime'].split('T')[0]
-        calendar_events[event_date] = event
-
-    progress_bar(0, events_length, prefix='Progress:', suffix='Complete', length=50)
-    # Update the existent events and create the new ones
-    for i, event in enumerate(events):
-        start_event_date = event['start']['dateTime'].split('T')[0]
-        end_event_date = event['end']['dateTime'].split('T')[0]
-        start_calendar_event = calendar_events.get(start_event_date)
-        end_calendar_event = calendar_events.get(end_event_date) if start_event_date != end_event_date else None
-
-        if start_calendar_event:
-            calendar.update_event(start_calendar_event, event)
-        else:
-            calendar.create_event(event)
-        
-        if end_calendar_event:
-            calendar.delete_event(end_calendar_event)
-
-        progress_bar(i+1, events_length, prefix='Progress:', suffix='Complete', length=50)
-
+    # Sync shifts
+    sync(events, calendar)
     print('Event synchronized!')
 
 

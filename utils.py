@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timedelta
 
 
 def remove_control_chars(str):
@@ -32,3 +33,20 @@ def progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100,
     # Print New Line on Complete
     if iteration == total:
         print()
+
+
+def str2datetime(str):
+    d = str.split('+')[0] if '+' in str else str
+    return datetime.strptime(d, '%Y-%m-%dT%H:%M:%S')
+
+
+def str2date(str):
+    return str2datetime(str).date()
+
+
+def date2datetime(date):
+    return datetime.combine(date, datetime.min.time())
+
+
+def add_days(date, days):
+    return date + timedelta(days=days)
