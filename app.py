@@ -6,16 +6,6 @@ from event import EventAdapter
 from utils import progress_bar, str2date, str2datetime, add_days, date2datetime
 
 
-def get_init_date(events):
-    now = datetime.utcnow()
-    try:
-        start_date = str2datetime(events[0]['start']['dateTime']) if len(events) > 0 else now
-    except Exception as e:
-        start_date = now
-
-    return start_date
-
-
 def sync(events, calendar):
     init_date = str2date(events[0]['start']['dateTime']) if len(events) > 0 else datetime.today()
     last_date = str2date(events[-1]['start']['dateTime'])
