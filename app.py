@@ -1,9 +1,13 @@
+import logging
 from datetime import datetime
 from ivu import IVU
 from cal import Calendar
 from event import EventAdapter
 from config import config
-from utils import progress_bar, str2date, str2datetime, add_days, date2datetime
+from utils import progress_bar, str2date, add_days, date2datetime
+
+# Add logger
+logging.basicConfig(filename='app.log', filemode='w+', datefmt='%d-%m-%Y %H:%M:%S')
 
 
 def sync(events, calendar):
@@ -59,4 +63,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.exception('Exception occurred')
