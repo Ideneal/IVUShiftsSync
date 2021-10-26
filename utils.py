@@ -37,6 +37,7 @@ def progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100,
 
 def str2datetime(str):
     d = str.split('+')[0] if '+' in str else str
+    d = d.replace('Z', '')
     return datetime.strptime(d, '%Y-%m-%dT%H:%M:%S')
 
 
