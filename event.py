@@ -36,8 +36,8 @@ class EventAdapter:
             if day_after:
                 time_end = time_end[:-1]
 
-            start_date_time = datetime.strptime(date + ' ' + time_begin , '%d/%m/%y %H:%M')
-            end_date_time = datetime.strptime(date + ' ' + time_end , '%d/%m/%y %H:%M')
+            start_date_time = datetime.strptime(date + ' ' + time_begin , '%d.%m.%y %H:%M')
+            end_date_time = datetime.strptime(date + ' ' + time_end , '%d.%m.%y %H:%M')
 
             if day_after:
                 end_date_time += timedelta(days=1)

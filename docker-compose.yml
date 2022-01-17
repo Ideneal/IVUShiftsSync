@@ -4,4 +4,3 @@ services:
     build: .
     volumes:
       - .:/ivu
-    working_dir: /ivu
